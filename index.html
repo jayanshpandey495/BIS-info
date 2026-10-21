@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIS Info - Brighton International School</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes pulseCrest {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.85; }
+    }
+    .animate-pulse-crest {
+      animation: pulseCrest 2.5s infinite ease-in-out;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-800 antialiased flex justify-center items-center min-h-screen p-0 sm:p-4">
+
+  <!-- Mobile Device Frame Container -->
+  <div class="w-full max-w-md bg-slate-50 min-h-screen sm:min-h-[840px] sm:max-h-[850px] sm:rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative border-0 sm:border-[8px] border-slate-800">
+
+    <!-- Status Bar (Mobile Style) -->
+    <div class="bg-brand-900 text-white px-6 py-2 flex justify-between items-center text-xs font-medium z-50 select-none">
+      <span id="current-time">12:00</span>
+      <div class="flex items-center space-x-2 text-[10px]">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full text-green-400"></i>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 1: SPLASH SCREEN                                     -->
+    <!-- ========================================================= -->
+    <div id="page-splash" class="absolute inset-0 bg-gradient-to-b from-brand-900 via-brand-800 to-slate-900 z-40 flex flex-col items-center justify-between p-8 text-white transition-opacity duration-700">
+      <div class="flex-1 flex flex-col items-center justify-center text-center">
+        <!-- Animated Crest Logo -->
+        <div class="relative mb-6">
+          <div class="w-32 h-32 rounded-full bg-brand-500/20 absolute -inset-2 animate-ping rounded-full opacity-30"></div>
+          <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-brand-600 to-sky-400 p-1 shadow-2xl relative z-10 animate-pulse-crest flex items-center justify-center">
+            <div class="w-full h-full bg-brand-900 rounded-full flex flex-col items-center justify-center border-2 border-white/20">
+              <i class="fas fa-[#0284c7] fa-graduation-cap text-4xl text-sky-400 mb-1"></i>
+              <span class="text-[10px] tracking-widest font-bold text-white uppercase">Brighton</span>
+            </div>
+          </div>
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">BIS Info</h1>
+        <p class="text-sky-200 text-xs font-light max-w-[220px] leading-relaxed">Brighton International School Global Campus Network</p>
+      </div>
+      
+      <div class="w-full text-center pb-6">
+        <div class="inline-block px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-xs text-sky-200 border border-white/10 mb-4">
+          <i class="fas fa-spinner fa-spin mr-2"></i> Initializing App Engine...
+        </div>
+        <p class="text-[10px] text-slate-400">© 2026 Brighton International School</p>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 2: ONBOARDING & SETUP                                -->
+    <!-- ========================================================= -->
+    <div id="page-onboarding" class="hidden absolute inset-0 bg-slate-900 z-30 flex flex-col justify-between overflow-y-auto">
+      <!-- Top Half: Campus Background with Location Pin -->
+      <div class="relative h-2/5 bg-cover bg-center flex items-end p-6" style="background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80');">
+        <div class="z-10">
+          <div class="inline-flex items-center space-x-2 bg-brand-600/90 text-white px-3 py-1 rounded-full text-xs font-semibold mb-2 shadow-lg backdrop-blur-sm">
+            <i class="fas fa-location-dot text-red-400 animate-bounce"></i>
+            <span id="detected-location-badge">Detecting Location...</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white leading-tight">Welcome to BIS Info</h2>
+          <p class="text-xs text-slate-300">Set up your account and preferred school branch.</p>
+        </div>
+      </div>
+
+      <!-- Bottom Half: Form Card -->
+      <div class="flex-1 bg-white p-6 flex flex-col justify-between rounded-t-3xl -mt-4 relative z-20 shadow-2xl">
+        <div class="space-y-4">
+          <!-- Gmail Input -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Gmail / Account ID</label>
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-3 top-3.5 text-slate-400 text-sm"></i>
+              <input type="email" id="input-gmail" value="student@brighton.edu" placeholder="your.name@gmail.com" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+            </div>
+          </div>
+
+          <!-- Global Campus Selector -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Select Brighton Campus</label>
+            <div class="relative">
+              <i class="fas fa-school absolute left-3 top-3.5 text-slate-400 text-sm"></i>
+              <select id="select-branch" class="w-full pl-10 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white appearance-none font-medium text-slate-700 transition-all">
+                <option value="Raipur (India)" selected>Brighton Int'l School, Raipur (India)</option>
+                <option value="United Kingdom">Brighton College, United Kingdom</option>
+                <option value="Dubai (UAE)">Brighton College, Dubai (UAE)</option>
+                <option value="Abu Dhabi (UAE)">Brighton College, Abu Dhabi (UAE)</option>
+                <option value="Bangkok (Thailand)">Brighton College, Bangkok (Thailand)</option>
+                <option value="Singapore">Brighton College, Singapore</option>
+                <option value="Vietnam">Brighton College, Vietnam</option>
+              </select>
+              <i class="fas fa-chevron-down absolute right-3 top-4 text-slate-400 text-xs pointer-events-none"></i>
+            </div>
+          </div>
+
+          <!-- Location Permission System Status -->
+          <div class="p-3 bg-brand-50 border border-brand-100 rounded-xl flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-500 text-white flex items-center justify-center text-xs">
+                <i class="fas fa-compass"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-900">Location Services</p>
+                <p id="location-perm-status-text" class="text-[10px] text-brand-600">Permission: Not Set</p>
+              </div>
+            </div>
+            <button onclick="triggerLocationDialog()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-medium transition-colors">Grant</button>
+          </div>
+        </div>
+
+        <button onclick="completeOnboarding()" class="w-full py-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 flex items-center justify-center space-x-2 transition-all transform active:scale-95 mt-4">
+          <span>Continue to Dashboard</span>
+          <i class="fas fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- System Location Permission Modal Dialog -->
+    <div id="modal-location-dialog" class="hidden absolute inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl text-center space-y-4 transform transition-all scale-100">
+        <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-xl">
+          <i class="fas fa-location-dot"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Allow "BIS Info" to access your location?</h3>
+          <p class="text-xs text-slate-500 mt-1">Your location will be used to customize nearest campus admissions information, schedules, and emergency alerts.</p>
+        </div>
+        <div class="space-y-2 pt-2">
+          <button onclick="setLocationPermission('While using the app')" class="w-full py-2.5 bg-brand-600 text-white text-xs font-bold rounded-xl hover:bg-brand-700">While using the app</button>
+          <button onclick="setLocationPermission('Only this time')" class="w-full py-2.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200">Only this time</button>
+          <button onclick="setLocationPermission('Don\'t allow')" class="w-full py-2.5 text-slate-500 text-xs font-bold rounded-xl hover:text-slate-800">Don't allow</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PAGE 3: HOME DASHBOARD                                    -->
+    <!-- ========================================================= -->
+    <div id="page-home" class="hidden flex-1 flex flex-col bg-slate-100 overflow-hidden relative">
+      <!-- Shrinking Custom Header -->
+      <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-slate-900 text-white p-5 shadow-lg relative z-10 transition-all duration-300">
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-brand-100 font-bold text-sm shadow-inner">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+            <div>
+              <p class="text-[10px] text-sky-300 uppercase tracking-wider font-semibold">Active Profile</p>
+              <p id="home-user-gmail" class="text-xs font-bold text-white truncate max-w-[160px]">user@gmail.com</p>
+            </div>
+          </div>
+          <button onclick="resetAppSession()" title="Logout & Reset" class="w-8 h-8 rounded-full bg-white/10 hover:bg-red-500/20 text-slate-300 hover:text-red-300 flex items-center justify-center text-xs transition-colors">
+            <i class="fas fa-power-off"></i>
+          </button>
+        </div>
+
+        <!-- Campus Badge Bar -->
+        <div class="bg-white/10 border border-white/10 rounded-xl p-2.5 flex items-center justify-between text-xs backdrop-blur-md">
+          <div class="flex items-center space-x-2 truncate">
+            <i class="fas fa-building-columns text-sky-400"></i>
+            <span id="home-branch-name" class="font-semibold text-white truncate">Brighton Int'l School, Raipur</span>
+          </div>
+          <button onclick="showPage('page-onboarding')" class="text-[10px] text-sky-300 underline hover:text-white shrink-0 ml-2">Change</button>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Content Area -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        
+        <!-- Quick Action Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- AI Chat Assistant Box -->
+          <div onclick="showPage('page-chat')" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-brand-600 text-white flex items-center justify-center text-lg shadow-md group-hover:scale-105 transition-transform">
+                <i class="fas fa-robot"></i>
+              </div>
+              <span class="text-[10px] bg-sky-100 text-brand-700 px-2 py-0.5 rounded-full font-bold">24/7 AI</span>
+            </div>
+            <div class="mt-3">
+              <h3 class="text-sm font-bold text-slate-800 group-hover:text-brand-600 transition-colors">AI Assistant</h3>
+              <p class="text-[11px] text-slate-500 leading-tight mt-0.5">Instant dynamic school queries & support.</p>
+            </div>
+          </div>
+
+          <!-- Dynamic Admissions Department Box -->
+          <div onclick="showPage('page-admissions')" class="bg-gradient-to-br from-brand-700 to-brand-900 text-white p-4 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center text-lg shadow-md group-hover:scale-105 transition-transform">
+                <i class="fas fa-id-card-clip"></i>
+              </div>
+              <span class="text-[10px] bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-bold">Open</span>
+            </div>
+            <div class="mt-3">
+              <h3 class="text-sm font-bold text-white">Admissions Dept</h3>
+              <p class="text-[11px] text-sky-200 leading-tight mt-0.5">Campus criteria, fees & registration.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Profile & BEST Status Quick Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
+          <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-address-card text-brand-600"></i>
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Student ID & BEST Test Profile</h3>
+            </div>
+            <button onclick="openStudentModal()" class="text-xs text-brand-600 font-semibold hover:underline">View Card</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">Student Name</p>
+              <p id="dash-student-name" class="font-bold text-slate-700 truncate">Alexander Wright</p>
+            </div>
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">BEST Test Status</p>
+              <p id="dash-best-status" class="font-bold text-emerald-600 truncate">Passed (Score: 94%)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Admissions Banner -->
+        <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-4 text-white shadow-md relative overflow-hidden flex items-center justify-between">
+          <div class="relative z-10 space-y-1 max-w-[210px]">
+            <span class="bg-black/20 text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md">Enrollment 2026-27</span>
+            <h4 class="text-sm font-extrabold leading-tight">Admissions Open for Selected Campus</h4>
+            <p class="text-[10px] text-amber-100">Apply early for the Brighton Scholastic Entrance Test (BEST).</p>
+            <button onclick="showPage('page-admissions')" class="mt-2 px-3 py-1 bg-white text-amber-800 rounded-lg text-xs font-bold shadow-sm hover:bg-amber-50 transition-colors inline-block">Explore Portal</button>
+          </div>
+          <i class="fas fa-award text-7xl text-amber-400/30 absolute -right-2 -bottom-2"></i>
+        </div>
+
+        <!-- Campus Contact Quick Links Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Campus Desk Direct Contacts</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+              <span class="text-slate-500 text-[11px]"><i class="fas fa-phone mr-2 text-brand-600"></i>Helpline</span>
+              <span id="dash-phone" class="font-semibold text-slate-800">+91 99934 66111</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-xl">
+              <span class="text-slate-500 text-[11px]"><i class="fas fa-envelope mr-2 text-brand-600"></i>Admissions Email</span>
+              <span id="dash-email" class="font-semibold text-slate-800 truncate max-w-[170px]">info@brightoninternational.in</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Tab Navigation Bar -->
+      <div class="bg-white border-t border-slate-200 px-6 py-2 flex justify-around items-center z-20">
+        <button onclick="showPage('page-home')" class="flex flex-col items-center text-brand-600">
+          <i class="fas fa-house text-lg"></i>
+          <span class="text-[10px] font-bold mt-1">Home</span>
+        </button>
+        <button onclick="showPage('page-chat')" class="flex flex-col items-center text-slate-400 hover:text-brand-600 transition-colors">
+          <i class="fas fa-comments text-lg"></i>
+          <span class="text-[10px] font-bold mt-1">Chat AI</span>
+        </button>
+        <button onclick="showPage('page-admissions')" class="flex flex-col items-center text-slate-400 hover:text-brand-600 transition-colors">
+          <i class="fas fa-graduation-cap text-lg"></i>
+          <span class="text-[10px] font-bold mt-1">Admissions</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- SUB-PAGE 1: CHAT ASSISTANT                                -->
+    <!-- ========================================================= -->
+    <div id="page-chat" class="hidden flex-1 flex flex-col bg-slate-50 overflow-hidden absolute inset-0 z-30">
+      <!-- Chat Header with Back Button -->
+      <div class="bg-brand-900 text-white p-4 shadow-md flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-3">
+          <button onclick="showPage('page-home')" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors" title="Back to Home">
+            <i class="fas fa-arrow-left text-sm"></i>
+          </button>
+          <div>
+            <h2 id="chat-active-title" class="text-sm font-bold truncate max-w-[150px]">Chat Session #1</h2>
+            <p id="chat-active-subtitle" class="text-[10px] text-sky-300 truncate max-w-[160px]">Raipur Campus AI Support</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-1">
+          <button onclick="renameCurrentChat()" title="Rename Session" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-200 text-xs">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button onclick="createNewChatSession()" title="Create New Chat (+)" class="w-8 h-8 rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center justify-center text-xs shadow-md">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Session Switcher Bar -->
+      <div id="chat-session-tabs" class="bg-slate-200 px-3 py-2 flex items-center space-x-2 overflow-x-auto shrink-0 custom-scrollbar text-xs">
+        <!-- Dynamic chat session pills rendered by JS -->
+      </div>
+
+      <!-- Messages Area -->
+      <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+        <!-- Dynamic message bubbles rendered here -->
+      </div>
+
+      <!-- Message Input Box -->
+      <div class="p-3 bg-white border-t border-slate-200 shrink-0">
+        <form onsubmit="handleSendMessage(event)" class="flex items-center space-x-2">
+          <input type="text" id="chat-input" placeholder="Ask about fees, BEST exam, rules..." class="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+          <button type="submit" class="w-10 h-10 bg-brand-600 hover:bg-brand-700 text-white rounded-xl flex items-center justify-center text-sm shadow-md shrink-0 transition-transform active:scale-95">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- SUB-PAGE 2: ADMISSIONS DEPARTMENT (DYNAMIC CAMPUS)       -->
+    <!-- ========================================================= -->
+    <div id="page-admissions" class="hidden flex-1 flex flex-col bg-slate-100 overflow-hidden absolute inset-0 z-30">
+      <!-- Header with Back Button -->
+      <div class="bg-gradient-to-r from-brand-900 to-slate-900 text-white p-4 shadow-md flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-3">
+          <button onclick="showPage('page-home')" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+            <i class="fas fa-arrow-left text-sm"></i>
+          </button>
+          <div>
+            <h2 class="text-sm font-bold">Admissions Department</h2>
+            <p id="adm-header-branch" class="text-[10px] text-sky-300">Brighton Int'l School, Raipur</p>
+          </div>
+        </div>
+        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">2026-27 Open</span>
+      </div>
+
+      <!-- Admissions Body -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        
+        <!-- Tailored Branch Details Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Campus Overview</h3>
+            <span id="adm-curriculum-tag" class="text-[10px] bg-brand-50 text-brand-700 font-bold px-2 py-0.5 rounded-md">CBSE & Boarding</span>
+          </div>
+          <p id="adm-description" class="text-xs text-slate-600 leading-relaxed">Official information desk for Raipur campus providing holistic education, smart classrooms, and sports facilities.</p>
+        </div>
+
+        <!-- Dynamic Tuition & Fee Structure Card -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
+            <span>Fee Structure (2026-2027)</span>
+            <i class="fas fa-receipt text-brand-600"></i>
+          </h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between items-center p-2 bg-slate-50 rounded-xl">
+              <span class="text-slate-500">Registration & Application</span>
+              <span id="adm-fee-reg" class="font-bold text-slate-800">₹10,000</span>
+            </div>
+            <div class="flex justify-between items-center p-2 bg-slate-50 rounded-xl">
+              <span class="text-slate-500">Security Deposit (Refundable)</span>
+              <span id="adm-fee-sec" class="font-bold text-slate-800">₹20,000</span>
+            </div>
+            <div class="flex justify-between items-center p-2 bg-brand-50 border border-brand-100 rounded-xl">
+              <span class="text-brand-900 font-semibold">Annual Tuition / Boarding</span>
+              <span id="adm-fee-annual" class="font-extrabold text-brand-700">₹1,45,300</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admission Criteria & BEST Test Info -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Entrance & Eligibility</h3>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li class="flex items-start space-x-2">
+              <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+              <span id="adm-criteria-1">Admissions evaluated via Brighton Scholastic Entrance Test (BEST).</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+              <span>Interactive student-parent session following test evaluation.</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+              <span>Seats allocated on a strict first-come, first-admitted basis.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Campus Direct Desk Information -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Campus Contact Desk</h3>
+          <div class="space-y-2 text-xs">
+            <div class="p-2 bg-slate-50 rounded-xl space-y-1">
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">Address / Location</p>
+              <p id="adm-address" class="font-medium text-slate-700">12th KM, Zero Point, Near Vidhan Sabha, Off Baloda Bazar Road, Raipur, Chhattisgarh – 493111</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2 bg-slate-50 rounded-xl">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold">Admissions Phone</p>
+                <p id="adm-phone" class="font-bold text-brand-700">+91 99934 66111</p>
+              </div>
+              <div class="p-2 bg-slate-50 rounded-xl">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold">Hours</p>
+                <p id="adm-hours" class="font-bold text-slate-700">8:30 AM - 4:30 PM</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Interactive Application Form -->
+        <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-md space-y-3">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider">Request Admission Callback</h3>
+          <div class="space-y-2">
+            <input type="text" id="adm-form-name" placeholder="Parent / Guardian Name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+            <input type="tel" id="adm-form-phone" placeholder="Mobile Number" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+            <button onclick="submitAdmissionRequest()" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl transition-colors">Submit Application</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: STUDENT ID & BEST TEST SCORE PROFILE               -->
+    <!-- ========================================================= -->
+    <div id="modal-student-profile" class="hidden absolute inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+      <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl space-y-4 relative overflow-hidden">
+        <button onclick="closeStudentModal()" class="absolute right-4 top-4 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs">
+          <i class="fas fa-xmark"></i>
+        </button>
+
+        <div class="text-center pb-2 border-b border-slate-100">
+          <div class="w-16 h-16 rounded-full bg-brand-100 border-2 border-brand-500 flex items-center justify-center mx-auto text-brand-700 text-2xl font-bold mb-2">
+            <i class="fas fa-id-badge"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">Student Identity Card</h3>
+          <p class="text-[10px] text-brand-600 font-semibold">Brighton International School</p>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between py-1 border-b border-slate-50">
+            <span class="text-slate-400">Student ID:</span>
+            <span class="font-bold text-slate-800">BIS-2026-8842</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-50">
+            <span class="text-slate-400">Full Name:</span>
+            <span class="font-bold text-slate-800">Alexander Wright</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-50">
+            <span class="text-slate-400">Class / Section:</span>
+            <span class="font-bold text-slate-800">Grade 10 - A</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-50">
+            <span class="text-slate-400">Roll Number:</span>
+            <span class="font-bold text-slate-800">24</span>
+          </div>
+          <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-xl text-center mt-3">
+            <p class="text-[10px] text-emerald-600 font-bold uppercase">BEST Test Status</p>
+            <p class="text-sm font-extrabold text-emerald-700 mt-0.5">PASSED (Score: 94/100)</p>
+          </div>
+        </div>
+
+        <button onclick="closeStudentModal()" class="w-full py-2.5 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-slate-800 transition-colors">Close Profile</button>
+      </div>
+    </div>
+
+    <!-- Notification Toast Box -->
+    <div id="toast-box" class="hidden absolute top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-2xl z-50 flex items-center space-x-2 border border-slate-700">
+      <i class="fas fa-circle-check text-emerald-400"></i>
+      <span id="toast-message">Notification message</span>
+    </div>
+
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- JAVASCRIPT APP ENGINE & DYNAMIC LOGIC                     -->
+  <!-- ========================================================= -->
+  <script>
+    // --- Global App State & Campus Database ---
+    const campusDatabase = {
+      "Raipur (India)": {
+        name: "Brighton International School, Raipur",
+        curriculum: "CBSE & Boarding",
+        description: "Official campus in Raipur, Chhattisgarh featuring smart digital classrooms, sports infrastructure, and boarding facilities.",
+        regFee: "₹10,000",
+        secFee: "₹20,000",
+        annualFee: "₹1,45,300",
+        criteria: "Brighton Scholastic Entrance Test (BEST) + Interaction.",
+        address: "12th KM, Zero Point, Baloda Bazar Road, Raipur, CG - 493111",
+        phone: "+91 99934 66111",
+        email: "info@brightoninternational.in",
+        hours: "8:30 AM - 4:30 PM IST"
+      },
+      "United Kingdom": {
+        name: "Brighton College, United Kingdom",
+        curriculum: "A-Levels & GCSE",
+        description: "Premier independent school in England delivering outstanding academic results and co-curricular programs.",
+        regFee: "£150",
+        secFee: "£2,000",
+        annualFee: "£18,500 / term",
+        criteria: "UK Entrance Assessment + Independent Academic Interview.",
+        address: "Eastern Road, Brighton, East Sussex, BN2 5JJ, UK",
+        phone: "+44 1273 704200",
+        email: "registrar@brightoncollege.org.uk",
+        hours: "8:00 AM - 5:00 PM GMT"
+      },
+      "Dubai (UAE)": {
+        name: "Brighton College, Dubai (UAE)",
+        curriculum: "British Curriculum (KHDA)",
+        description: "State-of-the-art campus in Al Barsha South delivering world-class British education in Dubai.",
+        regFee: "AED 500",
+        secFee: "AED 4,000",
+        annualFee: "AED 64,000",
+        criteria: "CAT4 Assessment + School Report Evaluation.",
+        address: "Al Barsha South 2, Dubai, United Arab Emirates",
+        phone: "+971 4 387 1111",
+        email: "admissions@brightoncollegedubai.ae",
+        hours: "7:30 AM - 3:30 PM GST"
+      },
+      "Abu Dhabi (UAE)": {
+        name: "Brighton College, Abu Dhabi (UAE)",
+        curriculum: "British Curriculum (ADEK)",
+        description: "Rated Outstanding by ADEK, offering top-tier British education in the capital of the UAE.",
+        regFee: "AED 500",
+        secFee: "AED 3,500",
+        annualFee: "AED 58,000",
+        criteria: "Academic Assessment + Cognitive Test.",
+        address: "Bloom Gardens, Abu Dhabi, United Arab Emirates",
+        phone: "+971 2 815 6500",
+        email: "admissions@brightoncollege.ae",
+        hours: "7:30 AM - 3:30 PM GST"
+      },
+      "Bangkok (Thailand)": {
+        name: "Brighton College, Bangkok (Thailand)",
+        curriculum: "IGCSE & A-Levels",
+        description: "Leading international school in Bangkok in partnership with Brighton College UK.",
+        regFee: "THB 5,000",
+        secFee: "THB 50,000",
+        annualFee: "THB 740,000",
+        criteria: "English & Mathematics Assessment + Headmaster Interview.",
+        address: "8/8 Krungthep Kreetha Soi 15, Bang Kapi, Bangkok, Thailand",
+        phone: "+66 2 136 7800",
+        email: "admissions@brightoncollege.ac.th",
+        hours: "8:00 AM - 4:00 PM ICT"
+      },
+      "Singapore": {
+        name: "Brighton College, Singapore",
+        curriculum: "British Early & Primary",
+        description: "Specialist primary school in Singapore delivering holistic child-centered British education.",
+        regFee: "SGD 800",
+        secFee: "SGD 3,000",
+        annualFee: "SGD 39,000",
+        criteria: "Student Observation Session + Academic Review.",
+        address: "1 Lorong Chuan, Singapore 556818",
+        phone: "+65 6521 8888",
+        email: "admissions@brightoncollege.sg",
+        hours: "8:00 AM - 4:30 PM SGT"
+      },
+      "Vietnam": {
+        name: "Brighton College, Vietnam",
+        curriculum: "International British",
+        description: "Modern campus in Ocean Park Hanoi providing authentic British educational excellence.",
+        regFee: "VND 4,000,000",
+        secFee: "VND 20,000,000",
+        annualFee: "VND 520,000,000",
+        criteria: "Entrance Exam + Principal Assessment.",
+        address: "Vinhomes Ocean Park, Gia Lam, Hanoi, Vietnam",
+        phone: "+84 1800 6512",
+        email: "enquiries@brightoncollege.edu.vn",
+        hours: "8:00 AM - 5:00 PM ICT"
+      }
+    };
+
+    let appState = {
+      isLoggedIn: false,
+      userGmail: "student@brighton.edu",
+      selectedBranchKey: "Raipur (India)",
+      locationPermission: "Not Set",
+      chatSessions: [],
+      activeChatId: null,
+      nextChatId: 1
+    };
+
+    // --- System Initialization ---
+    window.addEventListener('DOMContentLoaded', () => {
+      updateClock();
+      setInterval(updateClock, 1000);
+      loadSavedSession();
+      
+      // Auto Splash Screen Transition
+      setTimeout(() => {
+        const splash = document.getElementById('page-splash');
+        splash.classList.add('opacity-0');
+        setTimeout(() => {
+          splash.classList.add('hidden');
+          if (appState.isLoggedIn) {
+            showPage('page-home');
+          } else {
+            showPage('page-onboarding');
+          }
+        }, 700);
+      }, 2200);
+    });
+
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('current-time').innerText = `${hours}:${mins}`;
+    }
+
+    // --- Persistent LocalStorage Handling ---
+    function loadSavedSession() {
+      try {
+        const saved = localStorage.getItem('bis_app_session');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          appState.isLoggedIn = parsed.isLoggedIn || false;
+          appState.userGmail = parsed.userGmail || "student@brighton.edu";
+          appState.selectedBranchKey = parsed.selectedBranchKey || "Raipur (India)";
+          appState.locationPermission = parsed.locationPermission || "Not Set";
+          appState.chatSessions = parsed.chatSessions || [];
+          appState.nextChatId = parsed.nextChatId || 1;
+        }
+      } catch (e) {
+        console.warn("Storage load error", e);
+      }
+
+      // Initialize default chat session if none exists
+      if (!appState.chatSessions || appState.chatSessions.length === 0) {
+        createNewChatSession(false);
+      } else {
+        appState.activeChatId = appState.chatSessions[0].id;
+      }
+
+      syncUIWithState();
+    }
+
+    function saveSessionToStorage() {
+      try {
+        localStorage.setItem('bis_app_session', JSON.stringify({
+          isLoggedIn: appState.isLoggedIn,
+          userGmail: appState.userGmail,
+          selectedBranchKey: appState.selectedBranchKey,
+          locationPermission: appState.locationPermission,
+          chatSessions: appState.chatSessions,
+          nextChatId: appState.nextChatId
+        }));
+      } catch (e) {
+        console.warn("Storage save error", e);
+      }
+    }
+
+    function resetAppSession() {
+      if (confirm("Logout and clear saved session data?")) {
+        localStorage.removeItem('bis_app_session');
+        appState.isLoggedIn = false;
+        showToast("Logged out successfully");
+        showPage('page-onboarding');
+      }
+    }
+
+    // --- Page & View Navigation ---
+    function showPage(pageId) {
+      const pages = ['page-onboarding', 'page-home', 'page-chat', 'page-admissions'];
+      pages.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(pageId);
+      if (target) target.classList.remove('hidden');
+
+      if (pageId === 'page-home') {
+        syncUIWithState();
+      } else if (pageId === 'page-admissions') {
+        renderAdmissionsTab();
+      } else if (pageId === 'page-chat') {
+        renderChatSessions();
+      }
+    }
+
+    // --- Setup & Onboarding Operations ---
+    function triggerLocationDialog() {
+      document.getElementById('modal-location-dialog').classList.remove('hidden');
+    }
+
+    function setLocationPermission(status) {
+      appState.locationPermission = status;
+      document.getElementById('modal-location-dialog').classList.add('hidden');
+      document.getElementById('location-perm-status-text').innerText = `Permission: ${status}`;
+      document.getElementById('detected-location-badge').innerText = status.includes('allow') ? 'Location Disabled' : 'Location Active';
+      showToast(`Location set: ${status}`);
+      saveSessionToStorage();
+    }
+
+    function completeOnboarding() {
+      const emailVal = document.getElementById('input-gmail').value.trim();
+      const branchVal = document.getElementById('select-branch').value;
+
+      if (!emailVal) {
+        showToast("Please enter a valid Gmail ID");
+        return;
+      }
+
+      appState.userGmail = emailVal;
+      appState.selectedBranchKey = branchVal;
+      appState.isLoggedIn = true;
+      
+      saveSessionToStorage();
+      syncUIWithState();
+      showToast("Account Setup Complete!");
+      showPage('page-home');
+    }
+
+    function syncUIWithState() {
+      const campus = campusDatabase[appState.selectedBranchKey] || campusDatabase["Raipur (India)"];
+      
+      // Home elements
+      document.getElementById('home-user-gmail').innerText = appState.userGmail;
+      document.getElementById('home-branch-name').innerText = campus.name;
+      document.getElementById('dash-phone').innerText = campus.phone;
+      document.getElementById('dash-email').innerText = campus.email;
+      
+      // Inputs
+      document.getElementById('input-gmail').value = appState.userGmail;
+      document.getElementById('select-branch').value = appState.selectedBranchKey;
+      document.getElementById('location-perm-status-text').innerText = `Permission: ${appState.locationPermission}`;
+    }
+
+    // --- Dynamic Admissions Tab ---
+    function renderAdmissionsTab() {
+      const campus = campusDatabase[appState.selectedBranchKey] || campusDatabase["Raipur (India)"];
+      
+      document.getElementById('adm-header-branch').innerText = campus.name;
+      document.getElementById('adm-curriculum-tag').innerText = campus.curriculum;
+      document.getElementById('adm-description').innerText = campus.description;
+      document.getElementById('adm-fee-reg').innerText = campus.regFee;
+      document.getElementById('adm-fee-sec').innerText = campus.secFee;
+      document.getElementById('adm-fee-annual').innerText = campus.annualFee;
+      document.getElementById('adm-criteria-1').innerText = `Admissions evaluated via ${campus.criteria}`;
+      document.getElementById('adm-address').innerText = campus.address;
+      document.getElementById('adm-phone').innerText = campus.phone;
+      document.getElementById('adm-hours').innerText = campus.hours;
+    }
+
+    function submitAdmissionRequest() {
+      const name = document.getElementById('adm-form-name').value;
+      const phone = document.getElementById('adm-form-phone').value;
+      if (!name || !phone) {
+        showToast("Please enter your name and phone number");
+        return;
+      }
+      showToast("Application Callback Requested!");
+      document.getElementById('adm-form-name').value = '';
+      document.getElementById('adm-form-phone').value = '';
+    }
+
+    // --- Multi-Session Chat Engine ---
+    function createNewChatSession(shouldSwitch = true) {
+      const newId = appState.nextChatId++;
+      const campus = campusDatabase[appState.selectedBranchKey] || campusDatabase["Raipur (India)"];
+      
+      const newSession = {
+        id: newId,
+        title: `Chat Session #${newId}`,
+        messages: [
+          { sender: 'ai', text: `Welcome! How can I assist you regarding ${campus.name}?` }
+        ]
+      };
+
+      appState.chatSessions.push(newSession);
+      appState.activeChatId = newId;
+
+      saveSessionToStorage();
+
+      if (shouldSwitch) {
+        showToast("New chat session created");
+        renderChatSessions();
+      }
+    }
+
+    function switchChatSession(id) {
+      appState.activeChatId = id;
+      saveSessionToStorage();
+      renderChatSessions();
+    }
+
+    function renameCurrentChat() {
+      const current = appState.chatSessions.find(s => s.id === appState.activeChatId);
+      if (!current) return;
+
+      const newTitle = prompt("Enter new title for this chat session:", current.title);
+      if (newTitle && newTitle.trim()) {
+        current.title = newTitle.trim();
+        saveSessionToStorage();
+        renderChatSessions();
+        showToast("Chat session renamed");
+      }
+    }
+
+    function renderChatSessions() {
+      const activeSession = appState.chatSessions.find(s => s.id === appState.activeChatId) || appState.chatSessions[0];
+      if (!activeSession) return;
+
+      // Update Header Titles
+      document.getElementById('chat-active-title').innerText = activeSession.title;
+      document.getElementById('chat-active-subtitle').innerText = appState.selectedBranchKey + " AI Desk";
+
+      // Render Session Selector Tabs
+      const tabsContainer = document.getElementById('chat-session-tabs');
+      tabsContainer.innerHTML = '';
+      appState.chatSessions.forEach(session => {
+        const isActive = session.id === activeSession.id;
+        const btn = document.createElement('button');
+        btn.onclick = () => switchChatSession(session.id);
+        btn.className = `px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+          isActive ? 'bg-brand-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'
+        }`;
+        btn.innerText = session.title;
+        tabsContainer.appendChild(btn);
+      });
+
+      // Render Messages
+      const msgContainer = document.getElementById('chat-messages-container');
+      msgContainer.innerHTML = '';
+
+      activeSession.messages.forEach(msg => {
+        const bubbleWrapper = document.createElement('div');
+        const isUser = msg.sender === 'user';
+        bubbleWrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+
+        bubbleWrapper.innerHTML = `
+          <div class="max-w-[80%] rounded-2xl p-3 text-xs shadow-sm ${
+            isUser ? 'bg-brand-600 text-white rounded-br-none' : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-none'
+          }">
+            <p class="leading-relaxed">${msg.text}</p>
+          </div>
+        `;
+        msgContainer.appendChild(bubbleWrapper);
+      });
+
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+    }
+
+    function handleSendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const activeSession = appState.chatSessions.find(s => s.id === appState.activeChatId);
+      if (!activeSession) return;
+
+      // Add user message
+      activeSession.messages.push({ sender: 'user', text: text });
+      input.value = '';
+      renderChatSessions();
+
+      // AI Response Simulation
+      setTimeout(() => {
+        const campus = campusDatabase[appState.selectedBranchKey] || campusDatabase["Raipur (India)"];
+        let response = `Regarding "${text}" at ${campus.name}: Admission desks are currently open for the 2026-27 session. Fee details and BEST eligibility are updated in your Admissions tab.`;
+
+        if (text.toLowerCase().includes('fee') || text.toLowerCase().includes('cost')) {
+          response = `Annual tuition for ${campus.name} is ${campus.annualFee} with a registration fee of ${campus.regFee}.`;
+        } else if (text.toLowerCase().includes('test') || text.toLowerCase().includes('best')) {
+          response = `The Brighton Scholastic Entrance Test (BEST) is conducted prior to admission. ${campus.criteria}`;
+        }
+
+        activeSession.messages.push({ sender: 'ai', text: response });
+        saveSessionToStorage();
+        renderChatSessions();
+      }, 600);
+    }
+
+    // --- Student Profile Modal Controls ---
+    function openStudentModal() {
+      document.getElementById('modal-student-profile').classList.remove('hidden');
+    }
+
+    function closeStudentModal() {
+      document.getElementById('modal-student-profile').classList.add('hidden');
+    }
+
+    // --- Toast Alert Helper ---
+    function showToast(msg) {
+      const toast = document.getElementById('toast-box');
+      document.getElementById('toast-message').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
